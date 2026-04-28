@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YT Studio — Team Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a26;
+    --border: #2a2a3d;
+    --accent: #ff3c5f;
+    --accent2: #7c3aed;
+    --accent3: #0ea5e9;
+    --gold: #f59e0b;
+    --green: #10b981;
+    --text: #f0f0f8;
+    --muted: #6b6b8a;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 800px 400px at 20% 10%, rgba(124,58,237,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 600px 400px at 80% 80%, rgba(255,60,95,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 1300px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* HEADER */
+  header {
+    padding: 28px 0 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  .logo h1 {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span { color: var(--accent); }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .sheets-btn {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .sheets-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(16,185,129,0.3); }
+
+  .drive-btn {
+    background: var(--accent3);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .drive-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(14,165,233,0.3); }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .stat-card.red::before { background: var(--accent); }
+  .stat-card.purple::before { background: var(--accent2); }
+  .stat-card.blue::before { background: var(--accent3); }
+  .stat-card.green::before { background: var(--green); }
+
+  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .stat-value { font-family: var(--font-head); font-size: 36px; font-weight: 800; }
+  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* MAIN GRID */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  /* PIPELINE */
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  /* VIDEO CARDS */
+  .video-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 14px;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+  }
+  .video-card:hover { border-color: var(--accent2); transform: translateX(3px); }
+
+  .video-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 12px;
+  }
+
+  .video-num {
+    font-family: var(--font-head);
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .video-title {
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+    flex: 1;
+    line-height: 1.4;
+  }
+
+  .priority-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .priority-badge.high { background: rgba(255,60,95,0.15); color: var(--accent); }
+  .priority-badge.med { background: rgba(245,158,11,0.15); color: var(--gold); }
+  .priority-badge.low { background: rgba(16,185,129,0.15); color: var(--green); }
+
+  /* PIPELINE STAGES */
+  .stages {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 14px;
+  }
+
+  .stage {
+    flex: 1;
+    padding: 8px 4px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    position: relative;
+    transition: all 0.2s;
+  }
+
+  .stage.done {
+    background: rgba(16,185,129,0.15);
+    color: var(--green);
+  }
+
+  .stage.active {
+    background: rgba(124,58,237,0.2);
+    color: #a78bfa;
+    font-weight: 700;
+  }
+
+  .stage-icon { font-size: 14px; display: block; margin-bottom: 2px; }
+
+  /* LINKS ROW */
+  .links-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .link-chip {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .link-chip:hover { border-color: var(--accent3); color: var(--accent3); }
+  .link-chip.has-file { border-color: var(--green); color: var(--green); background: rgba(16,185,129,0.08); }
+
+  /* TEAM PANEL */
+  .team-panel { display: flex; flex-direction: column; gap: 16px; }
+
+  .team-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .team-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .avatar {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .avatar.me { background: linear-gradient(135deg, var(--accent), #ff8c42); }
+  .avatar.nayan { background: linear-gradient(135deg, var(--accent2), var(--accent3)); }
+  .avatar.guddu { background: linear-gradient(135deg, var(--green), #0ea5e9); }
+
+  .team-name { font-family: var(--font-head); font-size: 15px; font-weight: 700; }
+  .team-role { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .team-tasks { display: flex; flex-direction: column; gap: 8px; }
+
+  .task-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .task-status {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .task-status.done { background: var(--green); border-color: var(--green); }
+  .task-status.inprog { background: rgba(245,158,11,0.2); border-color: var(--gold); }
+
+  .task-label { flex: 1; color: var(--muted); }
+  .task-label.done-text { text-decoration: line-through; color: #3a3a55; }
+
+  /* ADD VIDEO FORM */
+  .add-form {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+  label { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.5px; }
+
+  input, select, textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent2); }
+  select option { background: var(--surface); }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .btn-add {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn-add:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,58,237,0.4); }
+
+  /* NOTIFICATION TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--green);
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+    max-width: 300px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent3));
+    transition: width 0.5s;
+  }
+
+  /* SETUP GUIDE */
+  .setup-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 32px;
+  }
+
+  .setup-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .setup-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+  }
+
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .step-num.s1 { background: rgba(255,60,95,0.2); color: var(--accent); }
+  .step-num.s2 { background: rgba(124,58,237,0.2); color: #a78bfa; }
+  .step-num.s3 { background: rgba(14,165,233,0.2); color: var(--accent3); }
+  .step-num.s4 { background: rgba(16,185,129,0.2); color: var(--green); }
+  .step-num.s5 { background: rgba(245,158,11,0.2); color: var(--gold); }
+  .step-num.s6 { background: rgba(124,58,237,0.2); color: #c084fc; }
+
+  .step-title { font-family: var(--font-head); font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .step-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* FOLDER STRUCTURE */
+  .folder-tree {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 2;
+    color: var(--text);
+    margin-top: 14px;
+  }
+  .folder { color: var(--gold); }
+  .file { color: var(--accent3); }
+  .indent1 { padding-left: 20px; }
+  .indent2 { padding-left: 40px; }
+  .indent3 { padding-left: 60px; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    width: fit-content;
+  }
+  .tab {
+    padding: 9px 22px;
+    border-radius: 9px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--muted);
+    border: none;
+    background: none;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .setup-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .setup-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ANIMATE IN */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .video-card { animation: fadeUp 0.3s ease both; }
+  .stat-card { animation: fadeUp 0.3s ease both; }
+  .stat-card:nth-child(1) { animation-delay: 0.05s; }
+  .stat-card:nth-child(2) { animation-delay: 0.1s; }
+  .stat-card:nth-child(3) { animation-delay: 0.15s; }
+  .stat-card:nth-child(4) { animation-delay: 0.2s; }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🎬</div>
+      <div>
+        <h1>YT<span>Studio</span> Team</h1>
+        <div style="font-size:12px;color:var(--muted);">Your YouTube Production Hub</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="#" class="drive-btn" id="driveBtn">📁 Open Drive</a>
+      <a href="#" class="sheets-btn" id="sheetsBtn">📊 Open Tracker Sheet</a>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+    <button class="tab" onclick="showTab('videos')">🎬 Videos</button>
+    <button class="tab" onclick="showTab('setup')">⚙️ Setup Guide</button>
+  </div>
+
+  <!-- DASHBOARD TAB -->
+  <div id="tab-dashboard" class="tab-content active">
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card red">
+        <div class="stat-label">Total Videos</div>
+        <div class="stat-value" id="totalCount">0</div>
+        <div class="stat-sub">In pipeline</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value" id="doneCount">0</div>
+        <div class="stat-sub">Published / ready</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-label">In Progress</div>
+        <div class="stat-value" id="inProgCount">0</div>
+        <div class="stat-sub">Active work</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-label">This Month Target</div>
+        <div class="stat-value" id="targetCount">8</div>
+        <div class="stat-sub" id="targetSub">Videos to publish</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+      <!-- LEFT: VIDEO PIPELINE -->
+      <div>
+        <div class="section-title"><span class="dot"></span> Active Pipeline</div>
+        <div id="videoList">
+          <div class="empty-state">
+            <div class="empty-icon">🎬</div>
+            No videos yet. Add your first video below!
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: TEAM PANEL -->
+      <div class="team-panel">
+        <div class="section-title"><span class="dot" style="background:var(--accent3)"></span> Team Status</div>
+
+        <!-- You -->
+        <div class="team-card">
+          <div class="team-card-header">
+            <div class="avatar me">Y</div>
+            <div>
+              <div class="team-name">You</div>
+              <div class="team-role">✍️ Script · 🎧 Voice · ✂️ Editor</div>
+            </div>
+          </div>
+          <div class="team-tasks" id="you-tasks">
+            <div class="task-row">
+              <div class="task-status" title="Click to toggle"></div>
+              <div class="task-label">Script — Video #1</div>
+            </div>
+            <div class="task-row">
+              <div class="task-status done">✓</div>
+              <div class="task-label done-text">Script — Video #2</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nayan -->
+        <div class="team-card">
+          <div class="team-card-header">
+            <div class="avatar nayan">N</div>
+            <div>
+              <div class="team-name">Nayan</div>
+              <div class="team-role">🖼️ Image Prompt → Gemini</div>
+            </div>
+          </div>
+          <div class="team-tasks">
+            <div class="task-row">
+              <div class="task-status done">✓</div>
+              <div class="task-label done-text">Images — Video #2</div>
+            </div>
+            <div class="task-row">
+              <div class="task-status inprog">…</div>
+              <div class="task-label" style="color:var(--gold);">Images — Video #1 (working)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Guddu -->
+        <div class="team-card">
+          <div class="team-card-header">
+            <div class="avatar guddu">G</div>
+            <div>
+              <div class="team-name">Guddu</div>
+              <div class="team-role">🎥 Image → Video Generation</div>
+            </div>
+          </div>
+          <div class="team-tasks">
+            <div class="task-row">
+              <div class="task-status"></div>
+              <div class="task-label">Video Generation — #1</div>
+            </div>
+            <div class="task-row">
+              <div class="task-status done">✓</div>
+              <div class="task-label done-text">Video Generation — #2</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Progress -->
+        <div class="team-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-family:var(--font-head);font-size:14px;font-weight:700;">Monthly Target</div>
+            <div style="font-size:13px;color:var(--muted);" id="progressLabel">0 / 8</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:10px;">
+            🎯 Keep going! Update target in Settings
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+            <input type="number" id="targetInput" value="8" min="1" max="50" style="width:70px;padding:6px 10px;font-size:13px;" placeholder="Target">
+            <button onclick="updateTarget()" style="background:var(--accent2);color:#fff;border:none;padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px;">Set</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIDEOS TAB -->
+  <div id="tab-videos" class="tab-content">
+    <div class="section-title"><span class="dot" style="background:var(--green)"></span> Add New Video</div>
+    <div class="add-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>VIDEO TITLE</label>
+          <input id="newTitle" type="text" placeholder="e.g. Top 10 AI Tools 2025">
+        </div>
+        <div class="form-group">
+          <label>PRIORITY</label>
+          <select id="newPriority">
+            <option value="high">🔴 High</option>
+            <option value="med" selected>🟡 Medium</option>
+            <option value="low">🟢 Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>GOOGLE DRIVE FOLDER LINK (optional)</label>
+          <input id="newDriveLink" type="url" placeholder="Paste Drive folder URL">
+        </div>
+        <div class="form-group">
+          <label>TARGET PUBLISH DATE</label>
+          <input id="newDate" type="date">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label>NOTES / IDEA</label>
+        <textarea id="newNotes" placeholder="Topic idea, reference links, key points..."></textarea>
+      </div>
+      <button class="btn-add" onclick="addVideo()">+ Add to Pipeline</button>
+    </div>
+
+    <!-- ALL VIDEOS TABLE -->
+    <div class="section-title"><span class="dot" style="background:var(--accent3)"></span> All Videos</div>
+    <div id="allVideosList"></div>
+  </div>
+
+  <!-- SETUP GUIDE TAB -->
+  <div id="tab-setup" class="tab-content">
+    <div class="setup-section">
+      <div class="section-title"><span class="dot" style="background:var(--gold)"></span> Your Free Production System — Setup Guide</div>
+      <p style="color:var(--muted);font-size:14px;line-height:1.7;">Follow these steps once to set up your complete free team system. Everything runs on Google Workspace (free tier) — no paid tools needed.</p>
+
+      <div class="setup-grid">
+        <div class="setup-step">
+          <div class="step-num s1">1</div>
+          <div class="step-title">📁 Set Up Google Drive Structure</div>
+          <div class="step-desc">Create a shared folder called "YT Studio" in your Drive. Share it with Nayan & Guddu. Create the folder structure shown below.</div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num s2">2</div>
+          <div class="step-title">📊 Create the Tracker Sheet</div>
+          <div class="step-desc">Copy the Google Sheet template link below. Share with team. This is your single source of truth — every video has a row, every task has a status cell.</div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num s3">3</div>
+          <div class="step-title">🔔 Set Up Auto Notifications</div>
+          <div class="step-desc">In the Sheet → Tools → Notification Rules → "Any changes made" → Email notification. Each person sets this on their own account.</div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num s4">4</div>
+          <div class="step-title">📂 One Folder Per Video</div>
+          <div class="step-desc">For each video, create a numbered folder in Drive: "V01 - Video Title". Inside it, create subfolders for each stage (Script, Images, Voice, Video).</div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num s5">5</div>
+          <div class="step-title">📋 Workflow Rules</div>
+          <div class="step-desc">You add video to Sheet → write script → Nayan generates images → Guddu generates video → You do voice + edit. Update status in Sheet after each step.</div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num s6">6</div>
+          <div class="step-title">📌 Bookmark This Dashboard</div>
+          <div class="step-desc">Save this HTML file to your Drive too! It's fully offline. Or host it free on GitHub Pages so all 3 of you can open it anytime from any device.</div>
+        </div>
+      </div>
+
+      <!-- FOLDER STRUCTURE -->
+      <div style="margin-top:28px;">
+        <div class="section-title" style="font-size:15px;"><span class="dot" style="background:var(--gold)"></span> Recommended Drive Folder Structure</div>
+        <div class="folder-tree">
+          <div class="folder">📁 YT Studio (Shared with all)</div>
+          <div class="indent1 folder">📁 V01 - Top 10 AI Tools/</div>
+          <div class="indent2 folder">📁 01_Script/</div>
+          <div class="indent3 file">📄 script_v1.txt (from Claude)</div>
+          <div class="indent3 file">📄 image_prompts.txt (for Nayan)</div>
+          <div class="indent3 file">📄 video_prompts.txt (for Guddu)</div>
+          <div class="indent2 folder">📁 02_Images/</div>
+          <div class="indent3 file">🖼️ img_001.png, img_002.png ...</div>
+          <div class="indent2 folder">📁 03_Voiceover/</div>
+          <div class="indent3 file">🎵 voice_final.mp3</div>
+          <div class="indent2 folder">📁 04_Video_Clips/</div>
+          <div class="indent3 file">🎬 clip_001.mp4, clip_002.mp4 ...</div>
+          <div class="indent2 folder">📁 05_Final/</div>
+          <div class="indent3 file">🎬 V01_FINAL.mp4</div>
+          <div class="indent1 folder">📁 V02 - Next Video/</div>
+          <div class="indent1 folder">📁 _Templates/ (prompts, formats)</div>
+          <div class="indent1 file">📊 YT_Team_Tracker.gsheet</div>
+        </div>
+      </div>
+
+      <!-- SHEETS COLUMNS -->
+      <div style="margin-top:28px;">
+        <div class="section-title" style="font-size:15px;"><span class="dot" style="background:var(--accent2)"></span> Google Sheet Columns (copy this structure)</div>
+        <div style="overflow-x:auto;margin-top:14px;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr style="background:var(--surface);">
+                <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--muted);font-weight:600;">Column</th>
+                <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--muted);font-weight:600;">What to Enter</th>
+                <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--muted);font-weight:600;">Who Updates</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:9px 14px;border:1px solid var(--border);">Video #</td><td style="padding:9px 14px;border:1px solid var(--border);">V01, V02…</td><td style="padding:9px 14px;border:1px solid var(--border);">You</td></tr>
+              <tr style="background:rgba(255,255,255,0.02)"><td style="padding:9px 14px;border:1px solid var(--border);">Title</td><td style="padding:9px 14px;border:1px solid var(--border);">Video topic</td><td style="padding:9px 14px;border:1px solid var(--border);">You</td></tr>
+              <tr><td style="padding:9px 14px;border:1px solid var(--border);">Drive Folder Link</td><td style="padding:9px 14px;border:1px solid var(--border);">Clickable link</td><td style="padding:9px 14px;border:1px solid var(--border);">You</td></tr>
+              <tr style="background:rgba(255,255,255,0.02)"><td style="padding:9px 14px;border:1px solid var(--border);">Script Status</td><td style="padding:9px 14px;border:1px solid var(--border);">Todo / Done</td><td style="padding:9px 14px;border:1px solid var(--border);">You</td></tr>
+              <tr><td style="padding:9px 14px;border:1px solid var(--border);">Image Prompts</td><td style="padding:9px 14px;border:1px solid var(--border);">Todo / Done</td><td style="padding:9px 14px;border:1px solid var(--border);">You → Nayan picks up</td></tr>
+              <tr style="background:rgba(255,255,255,0.02)"><td style="padding:9px 14px;border:1px solid var(--border);">Images Done</td><td style="padding:9px 14px;border:1px solid var(--border);">Todo / In Progress / Done</td><td style="padding:9px 14px;border:1px solid var(--border);">Nayan</td></tr>
+              <tr><td style="padding:9px 14px;border:1px solid var(--border);">Video Gen Done</td><td style="padding:9px 14px;border:1px solid var(--border);">Todo / In Progress / Done</td><td style="padding:9px 14px;border:1px solid var(--border);">Guddu</td></tr>
+              <tr style="background:rgba(255,255,255,0.02)"><td style="padding:9px 14px;border:1px solid var(--border);">Voiceover Done</td><td style="padding:9px 14px;border:1px solid var(--border);">Todo / Done</td><td style="padding:9px 14px;border:1px solid var(--border);">You</td></tr>
+              <tr><td style="padding:9px 14px;border:1px solid var(--border);">Final Edit</td><td style="padding:9px 14px;border:1px solid var(--border);">Todo / Done</td><td style="padding:9px 14px;border:1px solid var(--border);">You</td></tr>
+              <tr style="background:rgba(255,255,255,0.02)"><td style="padding:9px 14px;border:1px solid var(--border);">Published</td><td style="padding:9px 14px;border:1px solid var(--border);">Yes / No + YT link</td><td style="padding:9px 14px;border:1px solid var(--border);">You</td></tr>
+              <tr><td style="padding:9px 14px;border:1px solid var(--border);">Notes</td><td style="padding:9px 14px;border:1px solid var(--border);">Any comments</td><td style="padding:9px 14px;border:1px solid var(--border);">Anyone</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CONFIG SECTION -->
+      <div style="margin-top:28px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;">
+        <div class="section-title" style="font-size:15px;margin-bottom:16px;"><span class="dot" style="background:var(--accent3)"></span> Connect This Dashboard to Your Links</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>YOUR GOOGLE SHEET URL</label>
+            <input type="url" id="cfgSheets" placeholder="https://docs.google.com/spreadsheets/d/..." style="font-size:13px;">
+          </div>
+          <div class="form-group">
+            <label>YOUR DRIVE FOLDER URL</label>
+            <input type="url" id="cfgDrive" placeholder="https://drive.google.com/drive/folders/..." style="font-size:13px;">
+          </div>
+        </div>
+        <button onclick="saveConfig()" class="btn-add" style="font-size:13px;padding:10px 22px;">💾 Save Links</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ <span id="toastMsg">Status updated!</span></div>
+
+<script>
+  // STATE
+  let videos = JSON.parse(localStorage.getItem('yt_videos') || '[]');
+  let target = parseInt(localStorage.getItem('yt_target') || '8');
+  let config = JSON.parse(localStorage.getItem('yt_config') || '{}');
+
+  const stageNames = ['Script', 'Img Prompts', 'Images', 'Video Gen', 'Voice', 'Edit', 'Done'];
+  const stageIcons = ['✍️', '📝', '🖼️', '🎥', '🎧', '✂️', '🚀'];
+
+  // INIT
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('targetCount').textContent = target;
+    document.getElementById('targetInput').value = target;
+    if (config.sheetsUrl) {
+      document.getElementById('sheetsBtn').href = config.sheetsUrl;
+      document.getElementById('cfgSheets').value = config.sheetsUrl;
+    }
+    if (config.driveUrl) {
+      document.getElementById('driveBtn').href = config.driveUrl;
+      document.getElementById('cfgDrive').value = config.driveUrl;
+    }
+    renderAll();
+  });
+
+  function renderAll() {
+    renderStats();
+    renderVideos();
+    renderAllVideos();
+  }
+
+  function renderStats() {
+    const total = videos.length;
+    const done = videos.filter(v => v.stage === 6).length;
+    const inProg = videos.filter(v => v.stage > 0 && v.stage < 6).length;
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('doneCount').textContent = done;
+    document.getElementById('inProgCount').textContent = inProg;
+    document.getElementById('targetCount').textContent = target;
+    const pct = target > 0 ? Math.min(100, Math.round(done / target * 100)) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = done + ' / ' + target;
+    document.getElementById('targetSub').textContent = done + ' of ' + target + ' done';
+  }
+
+  function renderVideos() {
+    const list = document.getElementById('videoList');
+    const active = videos.filter(v => v.stage < 6);
+    if (active.length === 0) {
+      list.innerHTML = '<div class="empty-state"><div class="empty-icon">🎬</div>No active videos. Go to "Videos" tab to add one!</div>';
+      return;
+    }
+    list.innerHTML = active.map((v, i) => videoCardHTML(v, videos.indexOf(v))).join('');
+  }
+
+  function renderAllVideos() {
+    const list = document.getElementById('allVideosList');
+    if (videos.length === 0) {
+      list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div>No videos yet. Add one above!</div>';
+      return;
+    }
+    list.innerHTML = videos.map((v, i) => videoCardHTML(v, i, true)).join('');
+  }
+
+  function videoCardHTML(v, idx, showFull = false) {
+    const pClass = v.priority === 'high' ? 'high' : v.priority === 'med' ? 'med' : 'low';
+    const pLabel = v.priority === 'high' ? '🔴 High' : v.priority === 'med' ? '🟡 Medium' : '🟢 Low';
+
+    const stages = stageNames.map((s, si) => {
+      const cls = si < v.stage ? 'done' : si === v.stage ? 'active' : '';
+      return `<div class="stage ${cls}"><span class="stage-icon">${stageIcons[si]}</span>${s}</div>`;
+    }).join('');
+
+    const driveLink = v.driveLink
+      ? `<a href="${v.driveLink}" target="_blank" class="link-chip has-file">📁 Drive Folder</a>`
+      : `<span class="link-chip">📁 No Drive Link</span>`;
+
+    const dateStr = v.date ? `<span class="link-chip">📅 ${v.date}</span>` : '';
+
+    const controls = v.stage < 6
+      ? `<button onclick="advanceStage(${idx})" style="background:var(--accent2);color:#fff;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Mark "${stageNames[v.stage]}" Done ✓</button>`
+      : `<span style="color:var(--green);font-size:13px;font-weight:600;">🚀 Completed!</span>`;
+
+    return `
+    <div class="video-card" style="animation-delay:${idx * 0.05}s">
+      <div class="video-card-top">
+        <div class="video-num">V${String(idx+1).padStart(2,'0')}</div>
+        <div class="video-title">${v.title}</div>
+        <div class="priority-badge ${pClass}">${pLabel}</div>
+      </div>
+      <div class="stages">${stages}</div>
+      <div class="links-row" style="margin-bottom:12px;">
+        ${driveLink}
+        ${dateStr}
+        ${v.notes ? `<span class="link-chip" title="${v.notes}">📝 Notes</span>` : ''}
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        ${controls}
+        <button onclick="deleteVideo(${idx})" style="background:none;border:1px solid #3a2a2a;color:#6b4a4a;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='#3a2a2a';this.style.color='#6b4a4a'">🗑 Remove</button>
+      </div>
+    </div>`;
+  }
+
+  function addVideo() {
+    const title = document.getElementById('newTitle').value.trim();
+    if (!title) { showToast('⚠️ Please enter a video title!', 'orange'); return; }
+
+    videos.push({
+      title,
+      priority: document.getElementById('newPriority').value,
+      driveLink: document.getElementById('newDriveLink').value.trim(),
+      date: document.getElementById('newDate').value,
+      notes: document.getElementById('newNotes').value.trim(),
+      stage: 0,
+      createdAt: new Date().toISOString()
+    });
+
+    save();
+    document.getElementById('newTitle').value = '';
+    document.getElementById('newDriveLink').value = '';
+    document.getElementById('newDate').value = '';
+    document.getElementById('newNotes').value = '';
+    renderAll();
+    showToast('🎬 Video added to pipeline!');
+  }
+
+  function advanceStage(idx) {
+    if (videos[idx].stage < 6) {
+      videos[idx].stage++;
+      save();
+      renderAll();
+      const stageName = stageNames[videos[idx].stage - 1];
+      showToast(`✅ "${stageName}" marked as done!`);
+    }
+  }
+
+  function deleteVideo(idx) {
+    if (confirm('Remove this video from pipeline?')) {
+      videos.splice(idx, 1);
+      save();
+      renderAll();
+      showToast('🗑 Video removed');
+    }
+  }
+
+  function updateTarget() {
+    const val = parseInt(document.getElementById('targetInput').value);
+    if (val > 0) {
+      target = val;
+      localStorage.setItem('yt_target', target);
+      renderAll();
+      showToast('🎯 Target updated to ' + target + ' videos!');
+    }
+  }
+
+  function saveConfig() {
+    config.sheetsUrl = document.getElementById('cfgSheets').value.trim();
+    config.driveUrl = document.getElementById('cfgDrive').value.trim();
+    localStorage.setItem('yt_config', JSON.stringify(config));
+    if (config.sheetsUrl) document.getElementById('sheetsBtn').href = config.sheetsUrl;
+    if (config.driveUrl) document.getElementById('driveBtn').href = config.driveUrl;
+    showToast('💾 Links saved!');
+  }
+
+  function save() {
+    localStorage.setItem('yt_videos', JSON.stringify(videos));
+  }
+
+  function showToast(msg, color) {
+    const t = document.getElementById('toast');
+    const m = document.getElementById('toastMsg');
+    t.style.background = color === 'orange' ? 'var(--gold)' : 'var(--green)';
+    m.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function showTab(name) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+    if (name === 'videos') renderAllVideos();
+  }
+</script>
+
+</body>
+</html>
